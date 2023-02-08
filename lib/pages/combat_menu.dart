@@ -3,6 +3,7 @@ import 'dart:math' as m;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:harry_dnd_assistant/styles/buttonstyles.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../monsters/goblins/goblin.dart';
@@ -47,15 +48,60 @@ class _CombatMenuState extends State<CombatMenu> with SingleTickerProviderStateM
     super.initState();
   }
 
-  List<Widget> monsters = [];
+  List<dynamic> monsters = [];
 
   void addMonster() {
     Goblin r = Goblin();
-    monsters.add(r.statBlock());
+    monsters.add(r);
   }
 
   @override
   Widget build(BuildContext context) {
+
+    Widget currentMonster(int index) {
+      return Container(
+        child: Column(
+          children: [
+            monsters[index].statBlock(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    setState(() {
+                      monsters[index].takeDamage(1);
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: elementColour,
+                    shape: const StadiumBorder(),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.only(left: 12.0, right: 12.0),
+                    child: Text('Take Damage',),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    setState(() {
+                      monsters[index].healDamage(1);
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: elementColour,
+                    shape: const StadiumBorder(),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.only(left: 12.0, right: 12.0),
+                    child: Text('Heal Damage',),
+                  ),
+                ),
+              ],
+            ),
+          ]
+        )
+      );
+    }
 
     Widget pageContent() {
       //Structure is:
@@ -72,11 +118,10 @@ class _CombatMenuState extends State<CombatMenu> with SingleTickerProviderStateM
                       addMonster();
                     });
                   },
+                  style: mainButtonStyle,
                   child: const Text('Add')
                 ),
-                Column(
-                  children: monsters.isNotEmpty ? monsters : [],
-                ),
+                monsters.isNotEmpty ? currentMonster(0) : Container(),
               ]
           )
       );

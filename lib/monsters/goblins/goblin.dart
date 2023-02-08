@@ -13,6 +13,7 @@ class Goblin {
   String? size;
   int? ac;
   int? hp;
+  int? currentHp;
   int? speed;
   int? str;
   int? dex;
@@ -30,6 +31,7 @@ class Goblin {
     size = 'Small';
     ac = 15;
     hp = rollD6() + rollD6();
+    currentHp = hp;
     speed = 30;
 
     str = 8;
@@ -42,10 +44,16 @@ class Goblin {
 
   //Methods for monitoring the hp of this monster
   takeDamage(int damage) {
-    hp = hp! - damage;
+    currentHp = currentHp! - damage;
+    if (currentHp! < 0) {
+      currentHp = 0;
+    }
   }
   healDamage(int damage) {
-    hp = hp! + damage;
+    currentHp = currentHp! + damage;
+    if (currentHp! > hp!) {
+      currentHp = hp;
+    }
   }
 
   //Widget builder for the goblin's stat block
@@ -102,7 +110,7 @@ class Goblin {
                       Column(
                         children: [
                           Icon(Icons.favorite, color: elementColour,),
-                          Text(hp.toString(), style: detailContentText, overflow: TextOverflow.ellipsis,),
+                          Text('$currentHp/$hp', style: detailContentText, overflow: TextOverflow.ellipsis,),
                         ],
                       ),
                       Column(
@@ -169,37 +177,6 @@ class Goblin {
                       ],
                     ),
                   ]
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () async {
-
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: elementColour,
-                        shape: const StadiumBorder(),
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.only(left: 12.0, right: 12.0),
-                        child: Text('Take Damage',),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: elementColour,
-                        shape: const StadiumBorder(),
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.only(left: 12.0, right: 12.0),
-                        child: Text('Heal Damage',),
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),
